@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIGHER MATHEMATICS 📚</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: #00ffcc;
+      text-shadow: 1px 1px 4px #000;
+    }
+
+    nav {
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #00ffcc;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      background-color: #00ffcc;
+      color: black;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      color: black;
+      text-align: center;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .close:hover { color: red; }
+
+    input[type=text], input[type=email], input[type=password] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[type=submit], button {
+      width: 100%;
+      padding: 10px;
+      background-color: #2e8b57;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    input[type=submit]:hover, button:hover {
+      background-color: #246f45;
+    }
+
+    .lecture-panel {
+      display: block;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .lecture-panel h2 { color: #00ffcc; }
+
+    .lecture-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .lecture-card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      width: 200px;
+      text-align: center;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .lecture-card:hover {
+      background-color: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #ccc;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>📚 HIGHER MATHEMATICS</header>
+
+  <nav>
+    <a href="#">Home</a>
+    <a href="#" onclick="openModal('studentLogin')">Student Login</a>
+    <a href="#" onclick="openModal('studentRegister')">Student Registration</a>
+    <a href="#" onclick="openModal('adminLogin')">Admin Login</a>
+  </nav>
+
+  <!-- Lecture Content Modal -->
+  <div id="lectureContentModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('lectureContentModal')">&times;</span>
+      <h3 id="lectureTitle">🎥 Lecture Title</h3>
+      <div style="margin-top: 20px;">
+        <button onclick="openLectureVideo()" style="margin-bottom: 15px;">▶️ Watch Video</button><br>
+        <button onclick="downloadLecturePDF()">📄 Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Modals and Panels -->
+  <div id="studentRegister" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('studentRegister')">&times;</span>
+      <h3>Student Registration</h3>
+      <form id="regForm">
+        <input type="text" id="regName" placeholder="Full Name" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="text" id="regID" placeholder="Student ID" required>
+        <input type="password" id="regPass" placeholder="Password" required>
+        <input type="submit" value="Register">
+      </form>
+      <p id="regMsg" style="color: green;"></p>
+    </div>
+  </div>
+
+  <div id="adminLogin" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('adminLogin')">&times;</span>
+      <h3>Admin Login</h3>
+      <input type="text" id="adminID" placeholder="Enter Admin ID" required>
+      <input type="password" id="adminPass" placeholder="Enter Password" required>
+      <button onclick="checkAdminLogin()">Login</button>
+      <p id="adminError" style="color: red;"></p>
+    </div>
+  </div>
+
+  <div id="approvalPanel" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('approvalPanel')">&times;</span>
+      <h3>Pending Approvals</h3>
+      <ul id="pendingList" style="list-style: none; padding: 0;"></ul>
+    </div>
+  </div>
+
+  <div id="studentLogin" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('studentLogin')">&times;</span>
+      <h3>Student Login</h3>
+      <input type="text" id="loginID" placeholder="Student ID" required>
+      <input type="password" id="loginPass" placeholder="Password" required>
+      <button onclick="studentLogin()">Login</button>
+      <p id="loginError" style="color: red;"></p>
+    </div>
+  </div>
+
+  <div id="lectureLogin" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('lectureLogin')">&times;</span>
+      <h3>Enter Lecture ID & Password</h3>
+      <input type="text" id="lectureLoginID" placeholder="Lecture ID" required>
+      <input type="password" id="lectureLoginPass" placeholder="Lecture Password" required>
+      <input type="hidden" id="selectedLecture" />
+      <button onclick="verifyLectureLogin()">Login</button>
+      <p id="lectureLoginError" style="color: red;"></p>
+    </div>
+  </div>
+
+  <div id="lecturePanel" class="lecture-panel" style="display:none;">
+    <h2>🎓 Welcome to Lecture Panel</h2>
+    <p>You are now logged in and approved ✅</p>
+    <div class="lecture-cards">
+      <div class="lecture-card" onclick="requestLectureLogin('IFAS Mathematics')"><h3>📘 IFAS Mathematics</h3></div>
+      <div class="lecture-card" onclick="requestLectureLogin('Mathematical Pathshala')"><h3>📗 Mathematical Pathshala</h3></div>
+      <div class="lecture-card" onclick="requestLectureLogin('Gurukulam')"><h3>📕 Gurukulam</h3></div>
+      <div class="lecture-card" onclick="requestLectureLogin('Physics Wallah')"><h3>📙 Physics Wallah</h3></div>
+      <div class="lecture-card" onclick="requestLectureLogin('DIPS Academy')"><h3>📓 DIPS Academy</h3></div>
+      <div class="lecture-card" onclick="requestLectureLogin('IIM Jaipur')"><h3>🏛️ IIM Jaipur</h3></div>
+      <div class="lecture-card" onclick="requestLectureLogin('MathsCare (GP Sir)')"><h3>📐 MathsCare (GP Sir)</h3></div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 HIGHER MATHEMATICS | Designed by Youganda
+  </footer>
+
+  <script>
+    let pendingRegistrations = [];
+    let approvedStudents = JSON.parse(localStorage.getItem("approvedStudents") || "[]");
+    let currentVideoURL = "";
+    let currentPDFURL = "";
+
+    const lectureLogins = [
+      { name: "IFAS Mathematics", id: "12", password: "harsh", video: "ifas.mp4", pdf: "ifas.pdf" },
+      { name: "Mathematical Pathshala", id: "13", password: "abhinav", video: "pathshala.mp4", pdf: "pathshala.pdf" },
+      { name: "Gurukulam", id: "14", password: "abhi", video: "gurukulam.mp4", pdf: "gurukulam.pdf" },
+      { name: "Physics Wallah", id: "15", password: "raj", video: "pw.mp4", pdf: "pw.pdf" },
+      { name: "DIPS Academy", id: "16", password: "anil", video: "dips.mp4", pdf: "dips.pdf" },
+      { name: "IIM Jaipur", id: "17", password: "thakur", video: "iim.mp4", pdf: "iim.pdf" },
+      { name: "MathsCare (GP Sir)", id: "18", password: "rai", video: "mathscare.mp4", pdf: "mathscare.pdf" }
+    ];
+
+    function openModal(id) {
+      document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      ['studentRegister', 'adminLogin', 'studentLogin', 'approvalPanel', 'lectureLogin', 'lectureContentModal'].forEach(function(id) {
+        const modal = document.getElementById(id);
+        if (event.target === modal) modal.style.display = "none";
+      });
+    };
+
+    document.getElementById("regForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value;
+      const email = document.getElementById("regEmail").value;
+      const studentID = document.getElementById("regID").value;
+      const password = document.getElementById("regPass").value;
+
+      pendingRegistrations.push({ name, email, studentID, password });
+      document.getElementById("regMsg").innerText = "✅ Request sent to admin. Please wait for approval.";
+      document.getElementById("regForm").reset();
+    });
+
+    function checkAdminLogin() {
+      const id = document.getElementById("adminID").value;
+      const pass = document.getElementById("adminPass").value;
+      if (id === "123" && pass === "abhinav") {
+        closeModal("adminLogin");
+        openModal("approvalPanel");
+        showPendingRequests();
+      } else {
+        document.getElementById("adminError").innerText = "❌ Invalid ID or Password!";
+      }
+    }
+
+    function showPendingRequests() {
+      const list = document.getElementById("pendingList");
+      list.innerHTML = "";
+      if (pendingRegistrations.length === 0) {
+        list.innerHTML = "<li>No pending requests</li>";
+        return;
+      }
+
+      pendingRegistrations.forEach((student, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${student.name}</strong><br>Email: ${student.email}<br>ID: ${student.studentID}<br><br>
+        <button onclick="approve(${index})">✅ Approve</button>
+        <button onclick="reject(${index})">❌ Reject</button><hr>`;
+        list.appendChild(li);
+      });
+    }
+
+    function approve(index) {
+      const student = pendingRegistrations[index];
+      approvedStudents.push(student);
+      localStorage.setItem("approvedStudents", JSON.stringify(approvedStudents));
+      pendingRegistrations.splice(index, 1);
+      showPendingRequests();
+      alert(`✅ Approved: ${student.name}`);
+    }
+
+    function reject(index) {
+      alert(`❌ Rejected: ${pendingRegistrations[index].name}`);
+      pendingRegistrations.splice(index, 1);
+      showPendingRequests();
+    }
+
+    function studentLogin() {
+      const id = document.getElementById("loginID").value;
+      const pass = document.getElementById("loginPass").value;
+      const match = approvedStudents.find(std => std.studentID === id && std.password === pass);
+      if (match) {
+        closeModal("studentLogin");
+        document.getElementById("lecturePanel").style.display = "block";
+      } else {
+        document.getElementById("loginError").innerText = "❌ Invalid or unapproved student login!";
+      }
+    }
+
+    function requestLectureLogin(lectureName) {
+      openModal("lectureLogin");
+      document.getElementById("selectedLecture").value = lectureName;
+      document.getElementById("lectureLoginError").innerText = "";
+    }
+
+    function verifyLectureLogin() {
+      const id = document.getElementById("lectureLoginID").value;
+      const pass = document.getElementById("lectureLoginPass").value;
+      const lecture = document.getElementById("selectedLecture").value;
+      const error = document.getElementById("lectureLoginError");
+
+      const match = lectureLogins.find(
+        lec => lec.name === lecture && lec.id === id && lec.password === pass
+      );
+
+      if (match) {
+        closeModal("lectureLogin");
+        document.getElementById("lectureTitle").innerText = `🎥 ${match.name}`;
+        currentVideoURL = match.video;
+        currentPDFURL = match.pdf;
+        openModal("lectureContentModal");
+      } else {
+        error.innerText = "❌ Invalid ID or password!";
+      }
+    }
+
+    function openLectureVideo() {
+      if (currentVideoURL) {
+        window.open(currentVideoURL, "_blank");
+      }
+    }
+
+    function downloadLecturePDF() {
+      if (currentPDFURL) {
+        const link = document.createElement("a");
+        link.href = currentPDFURL;
+        link.download = "";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+  </script>
+</body>
+</html>
